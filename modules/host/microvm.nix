@@ -4,7 +4,7 @@
   self,
   netvm,
 }: {config, ...}: {
-  microvm.host.enable = true;
+  microvm.host.enable = false;
 
   microvm.vms."${netvm}" = {
     flake = self;

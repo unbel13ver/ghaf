@@ -7,5 +7,9 @@
 
     # For lsusb:
     usbutils
+
+    # For testing and demo purposes:
+    zathura
+    chromium
   ];
 }
