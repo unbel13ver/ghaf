@@ -27,7 +27,7 @@ Before you begin, follow the basic device-independent steps:
   * Enable flakes: <https://nixos.wiki/wiki/Flakes#Enable_flakes>.  
     To see all Ghaf supported outputs, type `nix flake show`.
   * Set up an AArch64 remote builder: <https://nixos.org/manual/nix/stable/advanced-topics/distributed-builds.html>.
-
+> [Cross-compilation](https://tiiuae.github.io/ghaf/build_config/cross_compilation.html) support is currently under development and not available for the building process.
 ---
 
 
@@ -40,34 +40,41 @@ This creates `ghaf-host.qcow2` copy-on-write overlay disk image in your current 
 
 ---
 
-### Building Ghaf Image for NVIDIA Jetson Orin AGX
-
-1. Run the `nix build github:tiiuae/ghaf#nvidia-jetson-orin-debug-flash-script` command to make a build and prepare the script. Give "yes" answers to all script questions. The building process takes around 1,5 hours.
-2. Use the `sudo ./result/bin/flash-ghaf-host` command to run the flashing script.
-3. After, you can prepare a USB boot media with the target image you built: `dd if=./result/nixos.img of=/dev/<YOUR_USB_DRIVE> bs=32M`. Boot the hardware from the USB media.
-
-> [Cross-compilation](https://tiiuae.github.io/ghaf/build_config/cross_compilation.html) support is currently under development and not available for the building process.
-
-
+### Ghaf Image for NVIDIA Jetson Orin AGX
 #### Flashing NVIDIA Jetson Orin AGX
-
-1. Set up the following connections:
+For the fresh device flashing bootloader firmware is required. 
+1. Run
+  ```
+  nix build github:tiiuae/ghaf#nvidia-jetson-orin-debug-flash-script
+  ```
+  command which builds Ghaf image, bootloader firmware and prepares the flashing script. Say `yes` to all script questions. The building process takes around 1,5 hours. 
+2. Set up the following connections:
    1. Connect the board to a power supply with a USB-C cable.
    2. Connect a Linux laptop to the board with the USB-C cable.
    3. Connect the Linux laptop to the board with a Micro-USB cable.
    > For more information on the board's connections details, see the [Hardware Layout](https://developer.nvidia.com/embedded/learn/jetson-agx-orin-devkit-user-guide/developer_kit_layout.html) section of the Jetson AGX Orin Developer Kit User Guide.
-2. Put the board in recovery mode. For more information, see the [Force Recovery](https://developer.nvidia.com/embedded/learn/jetson-agx-orin-devkit-user-guide/howto.html#force-recovery-mode) Mode section in the Jetson AGX Orin Developer Kit User Guide.
-3. Run the flashing script:
-    ```
-    sudo ~/result/bin/flash-ghaf-host 
-    ```
-    There is a time-out for this operation, so try to run the script within one minute after putting the device in recovery mode. If you got the error message "ERROR: might be timeout in USB write.", check with the `lsusb` command if your computer can still recognize the board, and run the flash script again.
-4. Power the device after flashing is done.
+3. After the build is completed, put the board in recovery mode (for more information, see the [Force Recovery Mode](https://developer.nvidia.com/embedded/learn/jetson-agx-orin-devkit-user-guide/howto.html#force-recovery-mode) section in the Jetson AGX Orin Developer Kit User Guide), and run the flashing script: 
+  ```
+  sudo ~/result/bin/flash-ghaf-host
+  ```
+  If you got the error message `ERROR: might be timeout in USB write.`, reboot the device and put it in recovery mode again. Check with the `lsusb` command if your computer can recognize the board, and run the flash script again.
+4. Power cycle the device after flashing is done.
 
+#### Building and running Ghaf image
+After the latest firmware is in place, it is possible to use simplified process by building only Ghaf disk image and running it from external media.
+1. Run 
+  ```
+  nix build github:tiiuae/ghaf#nvidia-jetson-orin-debug
+  ``` 
+  to build the target image;
+2. After the build is completed, prepare a USB boot media with the target image you built: 
+  ```
+  dd if=./result/nixos.img of=/dev/<YOUR_USB_DRIVE> bs=32M
+  ```
 
 ---
 
-### Building Ghaf Image for NXP i.MX 8QM-MEK
+### Ghaf Image for NXP i.MX 8QM-MEK
 
 In the case of i.MX8, Ghaf deployment contains of:
 
