@@ -94,8 +94,8 @@ in
       if stdenv.isAarch64
       then
         pkgs.fetchurl {
-          url = "https://vedenemo.dev/files/dev.scpp.saca.gala-0.0.1-arm64.zip";
-          sha256 = "sha256-tpCTCxElij92p0eiF7/E3UuOJfz8eKNBd/XgSd3dcaI=";
+          url = "file:///home/ivann/devel/GALA/tii-saca-ga-la/platforms/electron/build/dev.scpp.saca.gala-0.0.1-arm64.zip";
+          sha256 = "sha256-dIDlgg/YAIYCgVodycghwrjf89Jm0faInsiUoGvEscU=";
         }
       else
         pkgs.fetchurl {
