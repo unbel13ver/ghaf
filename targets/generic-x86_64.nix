@@ -19,7 +19,7 @@
       modules =
         [
           (import ../modules/host {
-            inherit self microvm netvm;
+            inherit self microvm netvm guivm;
           })
 
           {
@@ -57,8 +57,9 @@
         ++ extraModules;
     };
     netvm = "netvm-${name}-${variant}";
+    guivm = "guivm-${name}-${variant}";
   in {
-    inherit hostConfiguration netvm;
+    inherit hostConfiguration netvm guivm;
     name = "${name}-${variant}";
     netvmConfiguration =
       (import ../microvmConfigurations/netvm {
@@ -85,6 +86,22 @@
           }
         ];
       };
+    guivmConfiguration =
+      (import ../microvmConfigurations/guivm {
+        inherit lib microvm system;
+      })
+      .extendModules {
+        modules = [
+          {
+            microvm.devices = [
+              {
+                bus = "pci";
+                path = "0000:00:02.0";
+              }
+            ];
+          }
+        ];
+      };
     package = hostConfiguration.config.system.build.${hostConfiguration.config.formatAttr};
   };
   debugModules = [../modules/development/usb-serial.nix {ghaf.development.usb-serial.enable = true;}];
@@ -95,7 +112,8 @@
 in {
   nixosConfigurations =
     builtins.listToAttrs (map (t: lib.nameValuePair t.name t.hostConfiguration) targets)
-    // builtins.listToAttrs (map (t: lib.nameValuePair t.netvm t.netvmConfiguration) targets);
+    // builtins.listToAttrs (map (t: lib.nameValuePair t.netvm t.netvmConfiguration) targets)
+    // builtins.listToAttrs (map (t: lib.nameValuePair t.guivm t.guivmConfiguration) targets);
   packages = {
     x86_64-linux =
       builtins.listToAttrs (map (t: lib.nameValuePair t.name t.package) targets);
