@@ -31,6 +31,10 @@ in
 
         traceroute
         dig
+
+        # For me:
+        vim
+        libvirt
       ];
     };
   }

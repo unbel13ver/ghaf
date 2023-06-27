@@ -27,7 +27,10 @@ lib.nixosSystem {
     #../../modules/development/packages.nix
     #../../user-apps/default.nix
     ../../modules/graphics/weston.nix
-    #../../modules/windows/launcher.nix
+    {
+      lib.options.ghaf.profiles.graphics.enable = true;
+      ghaf.graphics.weston.enable = true;
+    }
 
     ({ config, lib, pkgs, ... }: {
       microvm = {
@@ -44,13 +47,13 @@ lib.nixosSystem {
       system.stateVersion = config.system.nixos.version;
 
       # Extend the PCI memory window
-      nixpkgs.overlays = [
-        (self: super: {
-          qemu_kvm = super.qemu_kvm.overrideAttrs (self: super: {
-            patches = super.patches ++ [./qemu-aarch-memory.patch];
-          });
-        })
-      ];
+      #nixpkgs.overlays = [
+      #  (self: super: {
+      #    qemu_kvm = super.qemu_kvm.overrideAttrs (self: super: {
+      #      patches = super.patches ++ [./qemu-aarch-memory.patch];
+      #    });
+      #  })
+      #];
 
       #services.getty.autologinUser = "user";
       #users.users.user = {
