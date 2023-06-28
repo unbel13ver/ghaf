@@ -23,6 +23,7 @@
           })
 
           {
+            virtualisation.libvirtd.enable = true;
             ghaf = {
               hardware.x86_64.common.enable = true;
               # Enable all the default UI applications
@@ -49,7 +50,7 @@
 
               # TODO: Change per your device
               # Passthrough Intel WiFi card
-              "vfio-pci.ids=8086:a0f0"
+              "vfio-pci.ids=8086:15d6"
             ];
           }
         ]
@@ -71,7 +72,7 @@
             microvm.devices = [
               {
                 bus = "pci";
-                path = "0000:00:14.3";
+                path = "0000:00:1f.6";
               }
             ];
 
@@ -93,12 +94,12 @@
       .extendModules {
         modules = [
           {
-            microvm.devices = [
-              {
-                bus = "pci";
-                path = "0000:00:02.0";
-              }
-            ];
+            #microvm.devices = [
+            #  {
+            #    bus = "pci";
+            #    path = "0000:00:02.0";
+            #  }
+            #];
           }
         ];
       };

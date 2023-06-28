@@ -26,25 +26,35 @@ lib.nixosSystem {
     }
     #../../modules/development/packages.nix
     #../../user-apps/default.nix
-    ../../modules/graphics/weston.nix
-    {
-      lib.options.ghaf.profiles.graphics.enable = true;
-      ghaf.graphics.weston.enable = true;
-    }
+    #../../modules/graphics/weston.nix
+    #{
+    #  lib.options.ghaf.profiles.graphics.enable = true;
+    #  ghaf.graphics.weston.enable = true;
+    #}
 
     ({ config, lib, pkgs, ... }: {
       microvm = {
+        mem = 2048;
         hypervisor = "qemu";
-        graphics.enable = true;
+        storeDiskType = "squashfs";
         interfaces = [{
           type = "tap";
           id = "vm-guivm";
-          mac = "02:00:00:02:01:01";
+          mac = "02:00:00:02:03:04";
         }];
+
       };
 
-      networking.hostName = "graphical-microvm";
+      networking = {
+        enableIPv6 = false;
+        firewall.allowedTCPPorts = [22];
+        useNetworkd = true;
+        hostName = "guivm";
+      };
+
+      systemd.network.enable = true;
       system.stateVersion = config.system.nixos.version;
+      microvm.qemu.bios.enable = false;
 
       # Extend the PCI memory window
       #nixpkgs.overlays = [
