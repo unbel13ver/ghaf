@@ -36,6 +36,9 @@
             };
           }
 
+          nixos-hardware.nixosModules.lenovo-thinkpad-t14
+          nixos-hardware.nixosModules.common-cpu-intel
+
           formatModule
 
           #TODO: how to handle the majority of laptops that need a little
@@ -50,7 +53,19 @@
 
               # TODO: Change per your device
               # Passthrough Intel WiFi card
-              "vfio-pci.ids=8086:15d6"
+              "vfio-pci.ids=8086:a0f0,8086:9b41"
+            ];
+
+            boot.kernelPatches = [
+             {
+               name = "Add IOMMU debug";
+               patch = null;
+
+               extraStructuredConfig = with lib.kernel; {
+                 IOMMU_DEBUGFS = yes;
+                 INTEL_IOMMU_DEBUGFS = yes;
+               };
+             }
             ];
           }
         ]
@@ -72,7 +87,7 @@
             microvm.devices = [
               {
                 bus = "pci";
-                path = "0000:00:1f.6";
+                path = "0000:00:14.3";
               }
             ];
 
@@ -89,17 +104,17 @@
       };
     guivmConfiguration =
       (import ../microvmConfigurations/guivm {
-        inherit lib microvm system;
+        inherit lib microvm system nixos-hardware;
       })
       .extendModules {
         modules = [
           {
-            #microvm.devices = [
-            #  {
-            #    bus = "pci";
-            #    path = "0000:00:02.0";
-            #  }
-            #];
+            microvm.devices = [
+              {
+                bus = "pci";
+                path = "0000:00:02.0";
+              }
+            ];
           }
         ];
       };

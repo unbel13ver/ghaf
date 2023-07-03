@@ -12,5 +12,5 @@ index ac626b3bef..b3875cb551 100644
 -    [VIRT_MEM] =                { GiB, LEGACY_RAMLIMIT_BYTES },
 +    [VIRT_MEM] =                { 0x300000000, LEGACY_RAMLIMIT_BYTES },
  };
- 
+
  /*

@@ -4,6 +4,7 @@
   lib,
   microvm,
   system,
+  nixos-hardware,
 }:
 lib.nixosSystem {
   inherit system;
@@ -11,6 +12,18 @@ lib.nixosSystem {
   modules = [
     # this runs as a MicroVM
     microvm.nixosModules.microvm
+
+    # Try to add some HW quirks
+    nixos-hardware.nixosModules.lenovo-thinkpad-t14
+    nixos-hardware.nixosModules.common-cpu-intel
+    nixos-hardware.nixosModules.common-gpu-intel
+
+    {
+     # This is here because of i915 module requires some firmware
+     hardware.enableRedistributableFirmware = true;
+     hardware.enableAllFirmware = true;
+     nixpkgs.config.allowUnfree = true;
+    }
 
     ../../modules/users/accounts.nix
     {
@@ -24,6 +37,7 @@ lib.nixosSystem {
     {
       ghaf.development.debug.tools.enable = true;
     }
+    # Uncomment this to enable "real" graphics with weston and apps
     #../../modules/development/packages.nix
     #../../user-apps/default.nix
     #../../modules/graphics/weston.nix
@@ -34,7 +48,7 @@ lib.nixosSystem {
 
     ({ config, lib, pkgs, ... }: {
       microvm = {
-        mem = 2048;
+        mem = 8192;
         hypervisor = "qemu";
         storeDiskType = "squashfs";
         interfaces = [{
@@ -54,16 +68,16 @@ lib.nixosSystem {
 
       systemd.network.enable = true;
       system.stateVersion = config.system.nixos.version;
-      microvm.qemu.bios.enable = false;
+      # Some people say that the bios might be needed
+      # I tried with the default one and with seabios.
+      # Nothing works
 
-      # Extend the PCI memory window
-      #nixpkgs.overlays = [
-      #  (self: super: {
-      #    qemu_kvm = super.qemu_kvm.overrideAttrs (self: super: {
-      #      patches = super.patches ++ [./qemu-aarch-memory.patch];
-      #    });
-      #  })
-      #];
+      #microvm.qemu.bios = {
+      #  enable = true;
+      #  #path = "${pkgs.seabios}/Csm16.bin";
+      #};
+
+      # From the microvm example. May be useful when the GPU is actually working
 
       #services.getty.autologinUser = "user";
       #users.users.user = {

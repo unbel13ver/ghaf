@@ -14,6 +14,6 @@
 
   microvm.vms."${guivm}" = {
     flake = self;
-    autostart = true;
+    autostart = false;
   };
 }
