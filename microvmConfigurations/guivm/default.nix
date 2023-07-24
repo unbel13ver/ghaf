@@ -40,15 +40,17 @@ lib.nixosSystem {
     # Uncomment this to enable "real" graphics with weston and apps
     #../../modules/development/packages.nix
     #../../user-apps/default.nix
-    #../../modules/graphics/weston.nix
-    #{
-    #  lib.options.ghaf.profiles.graphics.enable = true;
-    #  ghaf.graphics.weston.enable = true;
-    #}
+    ../../modules/graphics/weston.nix
+    {
+      lib.options.ghaf.profiles.graphics.enable = true;
+      ghaf.graphics.weston.enable = true;
+    }
 
     ({ config, lib, pkgs, ... }: {
+      system.stateVersion = config.system.nixos.version;
+
       microvm = {
-        mem = 8192;
+        mem = 2048;
         hypervisor = "qemu";
         storeDiskType = "squashfs";
         interfaces = [{
@@ -56,7 +58,6 @@ lib.nixosSystem {
           id = "vm-guivm";
           mac = "02:00:00:02:03:04";
         }];
-
       };
 
       networking = {
@@ -66,8 +67,30 @@ lib.nixosSystem {
         hostName = "guivm";
       };
 
-      systemd.network.enable = true;
-      system.stateVersion = config.system.nixos.version;
+      # Set internal network's interface name to ethint0
+      systemd.network.links."10-ethint0" = {
+        matchConfig.PermanentMACAddress = "02:00:00:02:03:04";
+        linkConfig.Name = "ethint0";
+      };
+
+      systemd.network = {
+        enable = true;
+        networks."10-ethint0" = {
+          matchConfig.MACAddress = "02:00:00:02:03:04";
+          addresses = [
+            {
+              # IP-address for debugging subnet
+              addressConfig.Address = "192.168.101.11/24";
+            }
+          ];
+          routes =  [
+            { routeConfig.Gateway = "192.168.101.1"; }
+          ];
+          linkConfig.RequiredForOnline = "routable";
+          linkConfig.ActivationPolicy = "always-up";
+        };
+      };
+
       # Some people say that the bios might be needed
       # I tried with the default one and with seabios.
       # Nothing works

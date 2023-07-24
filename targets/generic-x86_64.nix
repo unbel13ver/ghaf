@@ -23,7 +23,16 @@
           })
 
           {
-            virtualisation.libvirtd.enable = true;
+            virtualisation = {
+              libvirtd = {
+                enable = true;
+                qemu.ovmf.enable = true;
+                qemu.runAsRoot = false;
+                onBoot = "ignore";
+                onShutdown = "shutdown";
+              };
+            };
+
             ghaf = {
               hardware.x86_64.common.enable = true;
               # Enable all the default UI applications
@@ -67,6 +76,18 @@
                };
              }
             ];
+
+            boot = {
+              blacklistedKernelModules = [ "snd_hda_intel" "i915" ];
+              postBootCommands = ''
+                for i in /sys/class/vtconsole/*/bind
+                do
+                        echo 0 >$i
+                done
+                echo "vfio-pci" > /sys/bus/pci/devices/0000:00:02.0/driver_override
+                modprobe -i vfio-pci
+             '';
+            };
           }
         ]
         ++ (import ../modules/module-list.nix)
@@ -114,6 +135,9 @@
                 bus = "pci";
                 path = "0000:00:02.0";
               }
+            ];
+            microvm.kernelParams = [
+              "nosplash oprofile.timer=1 i915.enable_psr=0 i915.enable_dc=0"
             ];
           }
         ];

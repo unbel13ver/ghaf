@@ -17,6 +17,7 @@ in
         pkgs = nixpkgs.legacyPackages.${system};
       in {
         gala-app = pkgs.callPackage ./gala {};
+        i915ovmf = pkgs.callPackage ./i915ovmf {};
       };
     }))
 

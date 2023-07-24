@@ -7,6 +7,7 @@
   ...
 }: let
   cfg = config.ghaf.development.debug.tools;
+  i915ovmf = pkgs.callPackage ../../user-apps/i915ovmf {};
 in
   with lib; {
     options.ghaf.development.debug.tools = {
@@ -35,6 +36,7 @@ in
         # For me:
         vim
         libvirt
+        i915ovmf
       ];
     };
   }
