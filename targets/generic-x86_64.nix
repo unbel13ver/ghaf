@@ -32,6 +32,20 @@
         };
       }
     ];
+    guivmExtraModules = [
+      {
+        microvm.qemu.extraArgs = [
+          "-usb"
+          "-device" "usb-host,vendorid=0x046d,productid=0xc534"
+        ];
+        microvm.devices = [
+          {
+            bus = "pci";
+            path = "0000:00:02.0";
+          }
+        ];
+      }
+    ];
     hostConfiguration = lib.nixosSystem {
       inherit system;
       specialArgs = {inherit lib;};
@@ -41,25 +55,30 @@
           ../modules/host
           ../modules/virtualization/microvm/microvm-host.nix
           ../modules/virtualization/microvm/netvm.nix
+          ../modules/virtualization/microvm/guivm.nix
           {
             ghaf = {
               hardware.x86_64.common.enable = true;
 
               virtualization.microvm-host.enable = true;
               host.networking.enable = true;
-              virtualization.microvm.netvm = {
-                enable = true;
-                extraModules = netvmExtraModules;
+              virtualization.microvm = {
+                netvm = {
+                  enable = true;
+                  extraModules = netvmExtraModules;
+                };
+                guivm = {
+                  enable = true;
+                  extraModules = guivmExtraModules;
+                };
               };
 
               # Enable all the default UI applications
               profiles = {
-                applications.enable = true;
                 #TODO clean this up when the microvm is updated to latest
                 release.enable = variant == "release";
                 debug.enable = variant == "debug";
               };
-              windows-launcher.enable = true;
             };
           }
 
@@ -76,8 +95,9 @@
               "iommu=pt"
 
               # TODO: Change per your device
-              # Passthrough Intel WiFi card
-              "vfio-pci.ids=8086:a0f0"
+              # Passthrough Intel WiFi card 8086:02f0
+              # Passthrough Intel Embedded GPU 8086:9b41
+              "vfio-pci.ids=8086:02f0,8086:9b41"
             ];
           }
         ]

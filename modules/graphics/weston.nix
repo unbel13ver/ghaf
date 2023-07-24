@@ -64,6 +64,10 @@ in {
         StandardOutput = "journal";
         StandardError = "journal";
         ExecStart = "${pkgs.weston}/bin/weston";
+        #GPU pt needs some time to start - weston fails to restart 3 times in avg.
+        ExecStartPre="${pkgs.coreutils}/bin/sleep 3";
+        Restart="on-failure";
+        RestartSec="1";
         # Ivan N: I do not know if this is bug or feature of NixOS, but
         # when I add weston.ini file to environment.etc, the file ends up in
         # /etc/xdg directory on the filesystem, while NixOS uses
