@@ -31,6 +31,8 @@ in
 
         traceroute
         dig
+
+        waypipe
       ];
     };
   }
