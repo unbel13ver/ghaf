@@ -6,14 +6,13 @@
   ...
 }: let
   configHost = config;
-  guivmBaseConfiguration = {
+  appvmBaseConfiguration = {
     imports = [
       ({lib, ...}: {
         ghaf = {
           users.accounts.enable = lib.mkDefault configHost.ghaf.users.accounts.enable;
           profiles.graphics.enable = true;
-          profiles.applications.enable = false;
-          windows-launcher.enable = false;
+          profiles.applications.enable = true;
           development = {
             # NOTE: SSH port also becomes accessible on the network interface
             #       that has been passed through to NetVM
@@ -22,7 +21,7 @@
           };
         };
 
-        networking.hostName = "guivm";
+        networking.hostName = "appvm";
         system.stateVersion = lib.trivial.release;
 
         nixpkgs.buildPlatform.system = configHost.nixpkgs.buildPlatform.system;
@@ -39,13 +38,13 @@
         microvm = {
           mem = 2048;
           hypervisor = "qemu";
-          qemu.bios.enable = false;
+          qemu.bios.enable = true;
           storeDiskType = "squashfs";
           interfaces = [
             {
               type = "tap";
-              id = "vm-guivm";
-              mac = "02:00:00:02:02:02";
+              id = "vm-appvm";
+              mac = "02:00:00:03:03:03";
             }
           ];
         };
@@ -57,18 +56,18 @@
 
         # Set internal network's interface name to ethint0
         systemd.network.links."10-ethint0" = {
-          matchConfig.PermanentMACAddress = "02:00:00:02:02:02";
+          matchConfig.PermanentMACAddress = "02:00:00:03:03:03";
           linkConfig.Name = "ethint0";
         };
 
         systemd.network = {
           enable = true;
           networks."10-ethint0" = {
-            matchConfig.MACAddress = "02:00:00:02:02:02";
+            matchConfig.MACAddress = "02:00:00:03:03:03";
             addresses = [
               {
                 # IP-address for debugging subnet
-                addressConfig.Address = "192.168.101.3/24";
+                addressConfig.Address = "192.168.101.4/24";
               }
             ];
             routes = [
@@ -83,28 +82,28 @@
       })
     ];
   };
-  cfg = config.ghaf.virtualization.microvm.guivm;
+  cfg = config.ghaf.virtualization.microvm.appvm;
 in {
-  options.ghaf.virtualization.microvm.guivm = {
-    enable = lib.mkEnableOption "GUIVM";
+  options.ghaf.virtualization.microvm.appvm = {
+    enable = lib.mkEnableOption "appvm";
 
     extraModules = lib.mkOption {
       description = ''
         List of additional modules to be imported and evaluated as part of
-        GUIVM's NixOS configuration.
+        appvm's NixOS configuration.
       '';
       default = [];
     };
   };
 
   config = lib.mkIf cfg.enable {
-    microvm.vms."guivm" = {
+    microvm.vms."appvm" = {
       autostart = true;
       config =
-        guivmBaseConfiguration
+        appvmBaseConfiguration
         // {
           imports =
-            guivmBaseConfiguration.imports
+            appvmBaseConfiguration.imports
             ++ cfg.extraModules;
         };
       specialArgs = {inherit lib;};
