@@ -47,6 +47,7 @@
         ];
       }
     ];
+    appvmExtraModules = [{}];
     hostConfiguration = lib.nixosSystem {
       inherit system;
       specialArgs = {inherit lib;};
@@ -57,6 +58,7 @@
           ../modules/virtualization/microvm/microvm-host.nix
           ../modules/virtualization/microvm/netvm.nix
           ../modules/virtualization/microvm/guivm.nix
+          ../modules/virtualization/microvm/appvm.nix
           {
             ghaf = {
               hardware.x86_64.common.enable = true;
@@ -71,6 +73,10 @@
                 guivm = {
                   enable = true;
                   extraModules = guivmExtraModules;
+                };
+                appvm = {
+                  enable = true;
+                  extraModules = appvmExtraModules;
                 };
               };
 
