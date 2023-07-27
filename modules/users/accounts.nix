@@ -32,13 +32,6 @@ in
 
     config = mkIf cfg.enable {
       users = {
-        # User microvm needs an access to the USB devices such as input devices.
-        # Those devices are owned by root in ghaf system.
-        # The proper way of fixing that is creating a Udev rule which assigns
-        # usb devices to the specific group and add microvm and ghaf users to
-        # that group, but I do not have an idea on how to implement that in a
-        # nice and correct way, so I leave it as is for now.
-        groups.root.members = ["microvm"];
         mutableUsers = true;
         users."${cfg.user}" = {
           isNormalUser = true;
