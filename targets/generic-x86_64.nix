@@ -86,6 +86,8 @@
                 debug.enable = variant == "debug";
               };
             };
+            # Group kvm needs to access to USB keyboard and mouse for guivm USB passthrough 
+            services.udev.extraRules= "SUBSYSTEM==\"usb\",ATTR{idVendor}==\"046d\",ATTR{idProduct}==\"c534\",GROUP+=\"kvm\"";
           }
 
           formatModule
