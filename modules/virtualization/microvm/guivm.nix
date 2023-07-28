@@ -3,9 +3,11 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   configHost = config;
+  waypipe-ssh = pkgs.callPackage ../../../user-apps/waypipe-ssh {};
   guivmBaseConfiguration = {
     imports = [
       ({lib, ...}: {
@@ -20,6 +22,36 @@
             ssh.daemon.enable = lib.mkDefault configHost.ghaf.development.ssh.daemon.enable;
             debug.tools.enable = lib.mkDefault configHost.ghaf.development.debug.tools.enable;
           };
+          graphics.weston.launchers = [
+            {
+              path = "${pkgs.weston}/bin/weston-terminal";
+              icon = "${pkgs.weston}/share/weston/icon_terminal.png";
+            }
+
+            {
+              path = "${pkgs.waypipe}/bin/waypipe ssh -i ${waypipe-ssh}/keys/waypipe-ssh -o StrictHostKeyChecking=no 192.168.101.4 weston-terminal";
+              icon = "${pkgs.weston}/share/weston/icon_editor.png";
+            }
+
+            {
+              path = "${pkgs.waypipe}/bin/waypipe ssh -i ${waypipe-ssh}/keys/waypipe-ssh -o StrictHostKeyChecking=no 192.168.101.4 chromium --enable-features=UseOzonePlatform --ozone-platform=wayland";
+              icon = "${pkgs.weston}/share/weston/icon_editor.png";
+            }
+
+            {
+              path = "${pkgs.waypipe}/bin/waypipe ssh -i ${waypipe-ssh}/keys/waypipe-ssh -o StrictHostKeyChecking=no 192.168.101.4 gala --enable-features=UseOzonePlatform --ozone-platform=wayland";
+              icon = "${pkgs.weston}/share/weston/icon_editor.png";
+            }
+
+            {
+              path = "${pkgs.waypipe}/bin/waypipe ssh -i ${waypipe-ssh}/keys/waypipe-ssh -o StrictHostKeyChecking=no 192.168.101.4 zathura";
+              icon = "${pkgs.weston}/share/weston/icon_editor.png";
+            }
+          ];
+        };
+
+        environment.etc = {
+          "ssh/waypipe-ssh".source = "${waypipe-ssh}/keys/waypipe-ssh";
         };
 
         networking.hostName = "guivm";
