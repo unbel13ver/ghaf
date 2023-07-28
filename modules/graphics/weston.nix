@@ -75,7 +75,7 @@ in {
         # searching for weston.ini even if /etc/xdg is already in XDG_CONFIG_DIRS
         # The solution is to add /etc/xdg one more time for weston service.
         # It does not affect on system-wide XDG_CONFIG_DIRS variable.
-        Environment = "XDG_CONFIG_DIRS=$XDG_CONFIG_DIRS:/etc/xdg";
+        Environment = "XDG_CONFIG_DIRS=$XDG_CONFIG_DIRS:/etc/xdg PATH=${pkgs.openssh}/bin:$PATH";
       };
       wantedBy = ["default.target"];
     };
