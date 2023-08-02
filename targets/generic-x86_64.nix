@@ -59,7 +59,7 @@
           ../modules/virtualization/microvm/netvm.nix
           ../modules/virtualization/microvm/guivm.nix
           ../modules/virtualization/microvm/appvm.nix
-          {
+          ({ pkgs, ...}: {
             ghaf = {
               hardware.x86_64.common.enable = true;
 
@@ -76,6 +76,32 @@
                 };
                 appvm = {
                   enable = true;
+                  vms = with pkgs; [
+                    {
+                      name = "chromium";
+                      packages = [ chromium ];
+                      ipAddress = "192.168.101.5/24";
+                      macAddress = "02:00:00:03:03:05";
+                      ramMb = 3072;
+                      cores = 4;
+                    }
+                    {
+                      name = "gala";
+                      packages = [ (pkgs.callPackage ../user-apps/gala {}) ];
+                      ipAddress = "192.168.101.6/24";
+                      macAddress = "02:00:00:03:03:06";
+                      ramMb = 1536;
+                      cores = 2;
+                    }
+                    {
+                      name = "zathura";
+                      packages = [ zathura ];
+                      ipAddress = "192.168.101.7/24";
+                      macAddress = "02:00:00:03:03:07";
+                      ramMb = 512;
+                      cores = 1;
+                    }
+                  ];
                   extraModules = appvmExtraModules;
                 };
               };
@@ -87,9 +113,9 @@
                 debug.enable = variant == "debug";
               };
             };
-            # Group kvm needs to access to USB keyboard and mouse for guivm USB passthrough
-            services.udev.extraRules = "SUBSYSTEM==\"usb\",ATTR{idVendor}==\"046d\",ATTR{idProduct}==\"c534\",GROUP+=\"kvm\"";
-          }
+            # Group kvm needs to access to USB keyboard and mouse for guivm USB passthrough 
+            services.udev.extraRules= "SUBSYSTEM==\"usb\",ATTR{idVendor}==\"046d\",ATTR{idProduct}==\"c534\",GROUP+=\"kvm\"";
+          })
 
           formatModule
 
