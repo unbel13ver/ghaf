@@ -34,10 +34,18 @@
     ];
     guivmExtraModules = [
       {
+        microvm.qemu.genericObject = [
+          "memory-backend-file,share=on,id=mem0,size=2048M,mem-path=/dev/hugepages"
+        ];
+        microvm.qemu.extraMachineArgs = ",memory-backend=mem0";
         microvm.qemu.extraArgs = [
           "-usb"
           "-device"
-          "usb-host,vendorid=0x046d,productid=0xc534"
+          "usb-host,vendorid=0x046d,productid=0xc52b"
+          "-chardev"
+          "socket,id=char0,reconnect=0,path=/tmp/vhost3.socket"
+          "-device"
+          "vhost-user-vsock-pci,chardev=char0"
         ];
         microvm.devices = [
           {
@@ -47,7 +55,19 @@
         ];
       }
     ];
-    appvmExtraModules = [{}];
+    appvmExtraModules = [{
+      microvm.qemu.requirePci = true;
+      microvm.qemu.genericObject = [
+        "memory-backend-file,share=on,id=mem0,size=2048M,mem-path=/dev/hugepages"
+      ];
+      microvm.qemu.extraMachineArgs = ",memory-backend=mem0";
+      microvm.qemu.extraArgs = [
+        "-chardev"
+        "socket,id=char0,reconnect=0,path=/tmp/vhost4.socket"
+        "-device"
+        "vhost-user-vsock-pci,chardev=char0"
+      ];
+    }];
     hostConfiguration = lib.nixosSystem {
       inherit system;
       specialArgs = {inherit lib;};
@@ -88,7 +108,7 @@
               };
             };
             # Group kvm needs to access to USB keyboard and mouse for guivm USB passthrough
-            services.udev.extraRules = "SUBSYSTEM==\"usb\",ATTR{idVendor}==\"046d\",ATTR{idProduct}==\"c534\",GROUP+=\"kvm\"";
+            services.udev.extraRules = "SUBSYSTEM==\"usb\",ATTR{idVendor}==\"046d\",ATTR{idProduct}==\"c52b\",GROUP+=\"kvm\"";
           }
 
           formatModule

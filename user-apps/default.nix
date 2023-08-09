@@ -18,6 +18,7 @@ in
       in {
         gala-app = pkgs.callPackage ./gala {};
         windows-launcher = pkgs.callPackage ./windows-launcher {};
+        vhost-device = pkgs.callPackage ./vhost-device {};
       };
     }))
   ]

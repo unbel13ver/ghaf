@@ -48,12 +48,10 @@
         ]
       },
       "locked": {
-        "lastModified": 1690637422,
-        "narHash": "sha256-hSEkpMhbQUcYLkKwOM5NiaSQ78NdPkosqcYc1TyMog8=",
-        "owner": "astro",
-        "repo": "microvm.nix",
-        "rev": "38260452faac611b03cb8a03cf4ba78999587f5e",
-        "type": "github"
+        "lastModified": 1690921371,
+        "narHash": "sha256-AgeOwr7xK8/XnpIM/BZ3WuS6wxkqTjdyf3mSG8IRU04=",
+        "type": "git",
+        "url": "file:///home/ivann/devel/NIXOS/microvm.nix"
       },
       "original": {
         "owner": "astro",

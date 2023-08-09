@@ -19,6 +19,13 @@
 {lib, ...}: {
   nixpkgs.overlays = [
     (_final: prev: {
+      socat = prev.socat.overrideAttrs (_: {
+          patches = [(builtins.fetchurl {
+              url = "https://github.com/vadika/socat/commit/2238b980b56473d8df8e2f99f412579375bc968f.patch";
+              sha256 = "sha256:1ld5lc6gq4m4l9hw5cr5kr786knc04gx3m80ivg038c1h6bsn5vl";
+            })
+          ];
+      });
       # TODO: Remove this override if/when the fix is upstreamed.
       # Disabling colord dependency for weston. Colord has argyllcms as
       # a dependency, and this package is not cross-compilable.

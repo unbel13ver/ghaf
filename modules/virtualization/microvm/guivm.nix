@@ -131,7 +131,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     microvm.vms."guivm" = {
-      autostart = true;
+      autostart = false;
       config =
         guivmBaseConfiguration
         // {

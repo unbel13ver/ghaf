@@ -102,7 +102,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     microvm.vms."appvm" = {
-      autostart = true;
+      autostart = false;
       config =
         appvmBaseConfiguration
         // {

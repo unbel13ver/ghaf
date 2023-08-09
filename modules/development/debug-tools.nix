@@ -7,6 +7,8 @@
   ...
 }: let
   cfg = config.ghaf.development.debug.tools;
+  vhost-device = pkgs.callPackage ../../user-apps/vhost-device {};
+  nc-vhost = pkgs.callPackage ../../user-apps/nc-vhost {};
 in
   with lib; {
     options.ghaf.development.debug.tools = {
@@ -33,6 +35,9 @@ in
         dig
 
         waypipe
+        vhost-device
+        socat
+        nc-vhost
       ];
     };
   }
