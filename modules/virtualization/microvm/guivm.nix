@@ -10,7 +10,11 @@
   waypipe-ssh = pkgs.callPackage ../../../user-apps/waypipe-ssh {};
   guivmBaseConfiguration = {
     imports = [
-      ({lib, pkgs, ...}: {
+      ({
+        lib,
+        pkgs,
+        ...
+      }: {
         ghaf = {
           users.accounts.enable = lib.mkDefault configHost.ghaf.users.accounts.enable;
           profiles.graphics.enable = true;

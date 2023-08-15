@@ -55,7 +55,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    ghaf.graphics.weston.launchers = lib.optionals cfg.enable demoLaunchers;
+    ghaf.graphics.weston.launchers = lib.optionals cfg.enable defaultLauncher;
     environment.systemPackages = with pkgs; lib.optionals cfg.enable [];
     environment.etc."xdg/weston/weston.ini" = {
       text =
