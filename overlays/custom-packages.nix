@@ -26,6 +26,33 @@
       gala-app = final.callPackage ../user-apps/gala {};
       waypipe-ssh = final.callPackage ../user-apps/waypipe-ssh {};
       wifi-connector = final.callPackage ../user-apps/wifi-connector {};
+
+      labwc = (
+        prev.labwc.overrideAttrs (prevAttrs: {
+          buildInputs = with final; [
+            foot
+            swaybg
+            kanshi
+            waybar
+            mako
+            swayidle
+          ] ++ prevAttrs.buildInputs;
+          preInstallPhases = ["preInstallPhase"];
+          preInstallPhase = ''
+            substituteInPlace ../docs/autostart \
+             --replace swaybg ${final.swaybg}/bin/swaybg \
+             --replace kanshi ${final.kanshi}/bin/kanshi \
+             --replace waybar ${final.waybar}/bin/waybar \
+             --replace mako ${final.mako}/bin/mako \
+             --replace swayidle ${final.swayidle}/bin/swayidle
+
+             substituteInPlace ../docs/menu.xml \
+             --replace alacritty ${final.foot}/bin/foot
+
+             chmod +x ../docs/autostart
+          '';
+        })
+      );
       # TODO: Remove this override if/when the fix is upstreamed.
       # Disabling colord dependency for weston. Colord has argyllcms as
       # a dependency, and this package is not cross-compilable.

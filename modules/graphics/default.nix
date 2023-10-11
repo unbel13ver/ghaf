@@ -3,6 +3,7 @@
 {
   imports = [
     ./weston.nix
+    ./labwc.nix
     ./weston.ini.nix
     ./demo-apps.nix
     ./fonts.nix
