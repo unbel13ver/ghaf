@@ -24,6 +24,7 @@
           self.nixosModules.microvm
           self.nixosModules.reference-appvms
           self.nixosModules.reference-programs
+          self.nixosModules.disko-ab-partitions-v1
 
           ({
             pkgs,
