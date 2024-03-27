@@ -6,7 +6,7 @@
     # We version the disko partitiong module so that we can update it without breaking existing systems
     disko-lenovo-x1-basic-v1.imports = [
       inputs.disko.nixosModules.disko
-      ./lenovo-x1-disko-basic.nix
+      ./lenovo-x1-disko-ab-partitions.nix
       ./disko-basic-postboot.nix
     ];
   };
