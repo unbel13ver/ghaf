@@ -12,7 +12,7 @@
 
     disko-ab-partitions-v1.imports = [
       inputs.disko.nixosModules.disko
-      ./disko-ab-partitions.nix
+      ./disko-ab-partitions-zfs.nix
       ./disko-basic-postboot.nix
     ];
   };

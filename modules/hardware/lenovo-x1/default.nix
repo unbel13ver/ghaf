@@ -19,6 +19,11 @@ in {
     default = null;
   };
 
+  disko.devices.disk = {
+    disk1.device = "/dev/nvme0n1";
+    disk1.imageSize = "260G";
+  };
+
   config = {
     # Hardware definition
     ghaf.hardware.definition = {

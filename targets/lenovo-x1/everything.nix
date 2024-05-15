@@ -33,6 +33,21 @@
           }: let
             powerControl = pkgs.callPackage ../../packages/powercontrol {};
           in {
+            boot = {
+              kernelParams = [
+                "intel_iommu=on,sm_on"
+                "iommu=pt"
+                # Prevent i915 module from being accidentally used by host
+                "module_blacklist=i915"
+                "acpi_backlight=vendor"
+                # Enable VFIO for PCI devices
+                "vfio-pci.ids=${builtins.concatStringsSep "," vfioPciIds}"
+              ];
+
+              initrd.availableKernelModules = ["nvme" "zfs"];
+              kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
+            };
+
             security.polkit = {
               enable = true;
               extraConfig = powerControl.polkitExtraConfig;
