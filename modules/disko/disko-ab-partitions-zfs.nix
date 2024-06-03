@@ -20,7 +20,7 @@
 # - reserved-A : (10G) Reserved partition, no use
 # - reserved-B : (10G)
 # - gp-storage : (50G) General purpose storage for some common insecure cases
-# - recovery : (rest of the LVM pool) Recovery factory image is stored here
+# - recovery : (rest of the ZFS pool) Recovery factory image is stored here
 #
 # Second ZFS pool is dedicated for Storage VM completely.
 _: {
@@ -91,11 +91,12 @@ _: {
         };
         datasets = {
           "root_a" = {
-            type = "zfs_fs";
-            mountpoint = "/";
-            options = {
+            type = "zfs_volume";
+            size = "30G";
+            content = {
+              type = "filesystem";
+              format = "ext4";
               mountpoint = "/";
-              quota = "50G";
             };
           };
           "vm_storage_a" = {
