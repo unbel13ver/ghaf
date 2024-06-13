@@ -19,17 +19,11 @@ in {
     default = null;
   };
 
-  disko.devices.disk = {
-    disk1.device = "/dev/nvme0n1";
-    disk1.imageSize = "260G";
-  };
-
   config = {
     # Hardware definition
     ghaf.hardware.definition = {
       inherit (hwDefinition) generic;
       inherit (hwDefinition) input;
-      inherit (hwDefinition) disks;
       inherit (hwDefinition) network;
       inherit (hwDefinition) gpu;
       inherit (hwDefinition) audio;
@@ -37,11 +31,17 @@ in {
     };
 
     # Disk configuration
-    disko.devices.disk = hwDefinition.disks;
+    disko.devices.disk = {
+      disk1.device = "/dev/nvme0n1";
+      disk1.imageSize = "250G";
+    };
 
     # Hardware specific kernel parameters
     boot = {
       inherit (hwDefinition.generic) kernelParams;
+      initrd.availableKernelModules = ["nvme" "zfs"];
+      supportedFilesystems = [ "zfs" ];
+      kernelPackages = config.boot.zfs.package.latestCompatibleLinuxPackages;
     };
 
     # Host udev rules

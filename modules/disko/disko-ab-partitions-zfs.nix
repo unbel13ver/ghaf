@@ -66,8 +66,31 @@ _: {
               ];
             };
           };
+          root_a = {
+            size = "30G";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              mountpoint = "/";
+              mountOptions = [
+                "defaults"
+                "noatime"
+              ];
+            };
+          };
+          root_b = {
+            size = "30G";
+            content = {
+              type = "filesystem";
+              format = "ext4";
+              mountOptions = [
+                "defaults"
+                "noatime"
+              ];
+            };
+          };
           zfs_1 = {
-            size = "250G";
+            size = "150G";
             content = {
               type = "zfs";
               pool = "zroot_1";
@@ -90,15 +113,15 @@ _: {
           mountpoint = "none";
         };
         datasets = {
-          "root_a" = {
-            type = "zfs_volume";
-            size = "30G";
-            content = {
-              type = "filesystem";
-              format = "ext4";
-              mountpoint = "/";
-            };
-          };
+          #"root_a" = {
+          #  type = "zfs_volume";
+          #  size = "50G";
+          #  content = {
+          #    type = "filesystem";
+          #    format = "ext4";
+          #    mountpoint = "/";
+          #  };
+          #};
           "vm_storage_a" = {
             type = "zfs_fs";
             options = {
@@ -113,13 +136,13 @@ _: {
               quota = "10G";
             };
           };
-          "root_b" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "none";
-              quota = "50G";
-            };
-          };
+          #"root_b" = {
+          #  type = "zfs_fs";
+          #  options = {
+          #    mountpoint = "none";
+          #    quota = "50G";
+          #  };
+          #};
           "vm_storage_b" = {
             type = "zfs_fs";
             options = {
