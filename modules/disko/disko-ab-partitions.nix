@@ -74,12 +74,12 @@ _: {
             };
           };
           # ZFS pool that is going to be passed to the Storage VM
-          zfs_2 = {
-            content = {
-              type = "zfs";
-              pool = "zroot_2";
-            };
-          };
+          #zfs_2 = {
+          #  content = {
+          #    type = "zfs";
+          #    pool = "zroot_2";
+          #  };
+          #};
         };
       };
     };
@@ -146,15 +146,6 @@ _: {
               mountpoint = "none";
             };
           };
-        };
-      };
-      zroot_2 = {
-        # Dedicated partition for StorageVM
-        type = "zpool";
-        rootFsOptions = {
-          mountpoint = "none";
-        };
-        datasets = {
           "storagevm" = {
             type = "zfs_fs";
             options = {
@@ -163,6 +154,21 @@ _: {
           };
         };
       };
+      #zroot_2 = {
+      #  # Dedicated partition for StorageVM
+      #  type = "zpool";
+      #  rootFsOptions = {
+      #    mountpoint = "none";
+      #  };
+      #  datasets = {
+      #    "storagevm" = {
+      #      type = "zfs_fs";
+      #      options = {
+      #        mountpoint = "/storagevm";
+      #      };
+      #    };
+      #  };
+      #};
     };
   };
 }
