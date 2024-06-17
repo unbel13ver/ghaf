@@ -33,7 +33,7 @@ in {
     # Disk configuration
     disko.devices.disk = {
       disk1.device = "/dev/nvme0n1";
-      disk1.imageSize = "180G";
+      disk1.imageSize = "25G";
     };
 
     # Hardware specific kernel parameters

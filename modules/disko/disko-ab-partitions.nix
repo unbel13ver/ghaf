@@ -67,7 +67,7 @@ _: {
             };
           };
           zfs_1 = {
-            size = "100G";
+            size = "20G";
             content = {
               type = "zfs";
               pool = "zroot_1";
@@ -151,9 +151,16 @@ _: {
       zroot_2 = {
         # Dedicated partition for StorageVM
         type = "zpool";
-        mountpoint = "/storagevm";
         rootFsOptions = {
-          canmount = "off";
+          mountpoint = "none";
+        };
+        datasets = {
+          "storagevm" = {
+            type = "zfs_fs";
+            options = {
+              mountpoint = "/storagevm";
+            };
+          };
         };
       };
     };
