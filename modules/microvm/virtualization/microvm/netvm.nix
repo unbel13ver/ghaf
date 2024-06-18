@@ -1,6 +1,6 @@
 # Copyright 2022-2024 TII (SSRC) and the Ghaf contributors
 # SPDX-License-Identifier: Apache-2.0
-{
+{impermanence}: {
   config,
   lib,
   pkgs,
@@ -19,6 +19,7 @@
 
   netvmBaseConfiguration = {
     imports = [
+      impermanence.nixosModules.impermanence
       (import ./common/vm-networking.nix {
         inherit config lib vmName macAddress;
         internalIP = 1;
@@ -60,6 +61,13 @@
         # Add simple wi-fi connection helper
         environment.systemPackages = lib.mkIf config.ghaf.profiles.debug.enable [pkgs.wifi-connector];
 
+        environment.persistence."/tmp/storagevm" = {
+          hideMounts = true;
+          directories = [
+            "/etc/NetworkManager/system-connections/"
+          ];
+        };
+
         microvm = {
           optimize.enable = true;
           hypervisor = "qemu";
@@ -69,6 +77,13 @@
                 tag = "ro-store";
                 source = "/nix/store";
                 mountPoint = "/nix/.ro-store";
+              }
+              {
+                tag = "hostshare";
+                proto = "virtiofs";
+                securityModel = "passthrough";
+                source = "/storagevm";
+                mountPoint = "/tmp/storagevm";
               }
             ]
             ++ lib.optionals isGuiVmEnabled [
@@ -92,7 +107,12 @@
           };
         };
 
-        fileSystems = lib.mkIf isGuiVmEnabled {${configHost.ghaf.security.sshKeys.waypipeSshPublicKeyDir}.options = ["ro"];};
+        fileSystems = lib.mkMerge [
+          {
+            "/tmp/storagevm".neededForBoot = true;
+          }
+          (lib.mkIf isGuiVmEnabled {${configHost.ghaf.security.sshKeys.waypipeSshPublicKeyDir}.options = ["ro"];})
+        ];
 
         # SSH is very picky about to file permissions and ownership and will
         # accept neither direct path inside /nix/store or symlink that points

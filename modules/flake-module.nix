@@ -20,7 +20,7 @@
     jetpack.imports = [./jetpack];
     jetpack-microvm.imports = [./jetpack-microvm];
     lanzaboote.imports = [./lanzaboote];
-    microvm.imports = [./microvm];
+    microvm.imports = [(import ./microvm {inherit inputs;})];
     polarfire.imports = [./polarfire];
     reference-appvms.imports = [./reference/appvms];
     reference-programs.imports = [./reference/programs];

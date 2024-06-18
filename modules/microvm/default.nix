@@ -3,10 +3,10 @@
 #
 # Implementation of ghaf's virtual machines based on microvm.nix
 #
-{
+{inputs, ...}: {
   imports = [
     ./virtualization/microvm/microvm-host.nix
-    ./virtualization/microvm/netvm.nix
+    (import ./virtualization/microvm/netvm.nix {inherit (inputs) impermanence;})
     ./virtualization/microvm/adminvm.nix
     ./virtualization/microvm/idsvm/idsvm.nix
     ./virtualization/microvm/idsvm/mitmproxy

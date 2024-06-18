@@ -8,10 +8,10 @@
   self,
   ...
 }: let
-  inherit (inputs) microvm lanzaboote disko;
+  inherit (inputs) microvm lanzaboote disko impermanence;
   name = "lenovo-x1-carbon";
   system = "x86_64-linux";
-  targets = import ./everything.nix {inherit self lib microvm lanzaboote disko name system;};
+  targets = import ./everything.nix {inherit self lib microvm lanzaboote disko impermanence name system;};
 in {
   flake = {
     nixosConfigurations =
