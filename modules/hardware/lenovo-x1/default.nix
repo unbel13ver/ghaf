@@ -24,6 +24,7 @@ in {
     ghaf.hardware.definition = {
       inherit (hwDefinition) generic;
       inherit (hwDefinition) input;
+      inherit (hwDefinition) disks;
       inherit (hwDefinition) network;
       inherit (hwDefinition) gpu;
       inherit (hwDefinition) audio;
@@ -31,10 +32,7 @@ in {
     };
 
     # Disk configuration
-    disko.devices.disk = {
-      disk1.device = "/dev/nvme0n1";
-      disk1.imageSize = "25G";
-    };
+    disko.devices.disk = hwDefinition.disks;
 
     # Hardware specific kernel parameters
     boot = {

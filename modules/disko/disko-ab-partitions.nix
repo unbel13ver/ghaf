@@ -23,152 +23,159 @@
 # - recovery : (rest of the ZFS pool) Recovery factory image is stored here
 #
 # Second ZFS pool is dedicated for Storage VM completely.
-_: {
+{pkgs, ...}: {
   networking.hostId = "8425e349";
   # A lot of memory required for some unknown reason
-  disko.memSize = 4096;
-  disko.extraRootModules = ["zfs"];
-  disko.devices = {
-    disk.disk1 = {
-      type = "disk";
-      content = {
-        type = "gpt";
-        partitions = {
-          boot = {
-            name = "boot";
-            size = "1M";
-            type = "EF02";
-          };
-          esp_a = {
-            name = "ESP_A";
-            size = "500M";
-            type = "EF00";
-            content = {
-              type = "filesystem";
-              format = "vfat";
-              mountpoint = "/boot";
-              mountOptions = [
-                "umask=0077"
-                "nofail"
-              ];
+  disko = {
+    memSize = 4096;
+    extraPostVM = ''
+      ${pkgs.zstd}/bin/zstd --compress $out/*raw
+      rm $out/*raw
+    '';
+    extraRootModules = ["zfs"];
+    devices = {
+      disk.disk1 = {
+        type = "disk";
+        imageSize = "15G";
+        content = {
+          type = "gpt";
+          partitions = {
+            boot = {
+              name = "boot";
+              size = "1M";
+              type = "EF02";
             };
-          };
-          esp_b = {
-            name = "ESP_B";
-            size = "500M";
-            type = "EF00";
-            content = {
-              type = "filesystem";
-              format = "vfat";
-              mountOptions = [
-                "umask=0077"
-                "nofail"
-              ];
+            esp_a = {
+              name = "ESP_A";
+              size = "500M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [
+                  "umask=0077"
+                  "nofail"
+                ];
+              };
             };
-          };
-          zfs_1 = {
-            size = "20G";
-            content = {
-              type = "zfs";
-              pool = "zroot_1";
+            esp_b = {
+              name = "ESP_B";
+              size = "500M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountOptions = [
+                  "umask=0077"
+                  "nofail"
+                ];
+              };
             };
+            zfs_1 = {
+              size = "100%";
+              content = {
+                type = "zfs";
+                pool = "zroot_1";
+              };
+            };
+            # ZFS pool that is going to be passed to the Storage VM
+            #zfs_2 = {
+            #  content = {
+            #    type = "zfs";
+            #    pool = "zroot_2";
+            #  };
+            #};
           };
-          # ZFS pool that is going to be passed to the Storage VM
-          #zfs_2 = {
-          #  content = {
-          #    type = "zfs";
-          #    pool = "zroot_2";
-          #  };
-          #};
         };
       };
-    };
-    zpool = {
-      zroot_1 = {
-        type = "zpool";
-        rootFsOptions = {
-          mountpoint = "none";
-        };
-        datasets = {
-          "root_a" = {
-            type = "zfs_fs";
-            mountpoint = "/";
-            options = {
+      zpool = {
+        zroot_1 = {
+          type = "zpool";
+          rootFsOptions = {
+            mountpoint = "none";
+          };
+          datasets = {
+            "root_a" = {
+              type = "zfs_fs";
               mountpoint = "/";
-              quota = "30G";
+              options = {
+                mountpoint = "/";
+                quota = "30G";
+              };
             };
-          };
-          "vm_storage_a" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "/vm_storage";
-              quota = "30G";
+            "vm_storage_a" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "/vm_storage";
+                quota = "30G";
+              };
             };
-          };
-          "reserved_a" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "none";
-              quota = "10G";
+            "reserved_a" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "none";
+                quota = "10G";
+              };
             };
-          };
-          "root_b" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "none";
-              quota = "30G";
+            "root_b" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "none";
+                quota = "30G";
+              };
             };
-          };
-          "vm_storage_b" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "none";
-              quota = "30G";
+            "vm_storage_b" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "none";
+                quota = "30G";
+              };
             };
-          };
-          "reserved_b" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "none";
-              quota = "10G";
+            "reserved_b" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "none";
+                quota = "10G";
+              };
             };
-          };
-          "gp_storage" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "/gp_storage";
-              quota = "50G";
+            "gp_storage" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "/gp_storage";
+                quota = "50G";
+              };
             };
-          };
-          "recovery" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "none";
+            "recovery" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "none";
+              };
             };
-          };
-          "storagevm" = {
-            type = "zfs_fs";
-            options = {
-              mountpoint = "/storagevm";
+            "storagevm" = {
+              type = "zfs_fs";
+              options = {
+                mountpoint = "/storagevm";
+              };
             };
           };
         };
+        #zroot_2 = {
+        #  # Dedicated partition for StorageVM
+        #  type = "zpool";
+        #  rootFsOptions = {
+        #    mountpoint = "none";
+        #  };
+        #  datasets = {
+        #    "storagevm" = {
+        #      type = "zfs_fs";
+        #      options = {
+        #        mountpoint = "/storagevm";
+        #      };
+        #    };
+        #  };
+        #};
       };
-      #zroot_2 = {
-      #  # Dedicated partition for StorageVM
-      #  type = "zpool";
-      #  rootFsOptions = {
-      #    mountpoint = "none";
-      #  };
-      #  datasets = {
-      #    "storagevm" = {
-      #      type = "zfs_fs";
-      #      options = {
-      #        mountpoint = "/storagevm";
-      #      };
-      #    };
-      #  };
-      #};
     };
   };
 }
