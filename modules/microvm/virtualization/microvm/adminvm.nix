@@ -20,6 +20,9 @@ let
           ;
         internalIP = 10;
       })
+
+      ./common/storagevm.nix
+
       # We need to retrieve mac address and start log aggregator
       ../../../common/logging/hw-mac-retrieve.nix
       ../../../common/logging/logs-aggregator.nix
@@ -60,6 +63,18 @@ let
               server.endpoint = "https://loki.ghaflogs.vedenemo.dev/loki/api/v1/push";
             };
           };
+
+          storagevm = {
+              enable = true;
+              name = "adminvm";
+              users.${config.ghaf.users.accounts.user}.directories = [
+                ".cache"
+                ".config"
+                ".local"
+                "Pictures"
+                "Videos"
+              ];
+            };
 
           system.stateVersion = lib.trivial.release;
 
